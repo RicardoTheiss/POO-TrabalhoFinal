@@ -41,6 +41,7 @@ public class PegaDadosCSV {
     /// - Coluna 2: Categoria do lançamento (String).
     /// - Coluna 3: Valor do lançamento (positivo para receitas, negativo para despesas).
     public void lancaDados() {
+        System.out.println("caiu lancaDados");
         final String separador = ";";
         ControladorFinanceiro cf = ControladorFinanceiro.getInstancia();
         String linha;
@@ -74,6 +75,8 @@ public class PegaDadosCSV {
         }
     }
     
+    /// Salva os lançamentos financeiros em um arquivo CSV.
+    /// @param lanctos a lista de lançamentos a ser salva no arquivo.
     public void salvaDados(ArrayList<Lancamento> lanctos) {
         try {
             String caminhoArquivo = "/Users/ricardoschmitztheiss/Documents/facul/POO/POO-TrabalhoFinal/TrabalhoFinalPOO/Csv/BancoCsv.csv";
@@ -118,7 +121,11 @@ public class PegaDadosCSV {
         }
     }
 
-    
+    /// Formata uma data de um formato para outro.
+    /// @param dataInput a data de entrada como String.
+    /// @param f1 o formato original da data.
+    /// @param f2 o novo formato desejado da data.
+    /// @return a data formatada como String.
     private String formataData(String dataInput, String f1, String f2){
         try{
             DateTimeFormatter formatterOriginal = DateTimeFormatter.ofPattern(f1);

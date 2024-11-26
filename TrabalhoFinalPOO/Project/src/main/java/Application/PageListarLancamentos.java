@@ -107,7 +107,7 @@ public class PageListarLancamentos extends javax.swing.JFrame {
                         .addComponent(jButtonVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 89, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -121,9 +121,9 @@ public class PageListarLancamentos extends javax.swing.JFrame {
                                 .addComponent(erro)
                                 .addGap(181, 181, 181))))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(63, Short.MAX_VALUE)
-                .addComponent(jScrollPaneLancamentos, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPaneLancamentos, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,27 +175,50 @@ public class PageListarLancamentos extends javax.swing.JFrame {
             ControladorFinanceiro cf = ControladorFinanceiro.getInstancia();
 
             ArrayList<Lancamento> lanctos = cf.retornaLancamentos();
+            
+            System.out.println("tamanho ricardo lista " + lanctos.size());
 
             String retorno = "";
 
-            for (int i = 0; i < lanctos.size(); i++) {
-                Lancamento lancto = lanctos.get(i);
-                if(i == 0){
-                    retorno += "Data           Categoria      Valor \n";
+            Collections.sort(lanctos, Comparator.comparing(Lancamento::getData));
+
+            double saldoAtual = 0;
+
+            int larguraData = 12;
+            int larguraCategoria = 15;
+            int larguraValor = 10;
+            int larguraSaldo = 12;
+            
+            lancamentos.setFont(new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 12));
+
+            retorno += "Data" + " ".repeat(larguraData - 4) +
+                       "Categoria" + " ".repeat(larguraCategoria - 9) +
+                       "Valor" + " ".repeat(larguraValor - 5) +
+                       "Saldo Atual\n";
+
+            for (Lancamento lancto : lanctos) {
+                // Aplicar filtros
+                if (escolhaSelect.trim().equalsIgnoreCase("Receitas") && lancto.getValor() < 0) {
+                    saldoAtual += lancto.getValor();
+                    continue;
+                } else if (escolhaSelect.trim().equalsIgnoreCase("Despesas") && lancto.getValor() > 0) {
+                    saldoAtual += lancto.getValor();
+                    continue;
                 }
-                if(escolhaSelect.trim().equalsIgnoreCase("Receitas")){
-                    if(lancto.getValor() < 0){
-                        continue;
-                    }
-                }else if(escolhaSelect.trim().equalsIgnoreCase("Despesas")){
-                    if(lancto.getValor() > 0){
-                        continue;
-                    }
-                }
-                String dataFormat = formataData(lancto.getData(), "yyyyMMdd", "dd/MM/dd");
-                retorno += dataFormat + "       " + lancto.getTipo() + "      " + String.valueOf(lancto.getValor() + "\n");
+
+                String dataFormat = formataData(lancto.getData(), "yyyyMMdd", "dd/MM/yyyy");
+                saldoAtual += lancto.getValor(); 
+                
+                String espacoData = " ".repeat(larguraData - dataFormat.length());
+                String espacoCategoria = " ".repeat(larguraCategoria - String.valueOf(lancto.getTipo()).length());
+                String valorFormatado = String.format("%,.2f", lancto.getValor());
+                String saldoFormatado = String.format("%,.2f", saldoAtual);
+
+                retorno += dataFormat + espacoData +
+                           lancto.getTipo() + espacoCategoria +
+                           valorFormatado + " ".repeat(larguraValor - valorFormatado.length()) +
+                           saldoFormatado + "\n";
             }
-            System.out.println("retorno ricardo - " + retorno);
             lancamentos.setText(retorno);
         }catch(IllegalArgumentException e){
         }catch(Exception e){

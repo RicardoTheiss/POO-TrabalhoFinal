@@ -6,6 +6,7 @@ package Application;
 import BackEnd.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.zip.DataFormatException;
 import javax.swing.JOptionPane;
 
 /**
@@ -246,7 +247,7 @@ public class PageIncluirDespesas extends javax.swing.JFrame {
                JOptionPane.showMessageDialog(null, "O valor deve conter apenas numeros e virgulas");
         }catch(IllegalArgumentException e){
             JOptionPane.showMessageDialog(null, e.getMessage());
-        }
+        }catch(DataFormatException e){}
     }//GEN-LAST:event_jButtonIncluirDespesaActionPerformed
 
     /**
@@ -256,7 +257,7 @@ public class PageIncluirDespesas extends javax.swing.JFrame {
        
     }
     
-    private int formataData(String dataInput, String f1, String f2){
+    private int formataData(String dataInput, String f1, String f2)throws DataFormatException{
         try{
             System.out.println(dataInput + " - " + f1 + " - " + f2);
             DateTimeFormatter formatterOriginal = DateTimeFormatter.ofPattern(f1);
@@ -265,7 +266,7 @@ public class PageIncluirDespesas extends javax.swing.JFrame {
             return Integer.parseInt(data.format(formatterNovo));
         }catch(Exception e){
             JOptionPane.showMessageDialog(null, "A data deve ser digitada no formato dd/MM/yyyy");
-            throw new IllegalArgumentException();
+            throw new DataFormatException();
         }
     }
 
